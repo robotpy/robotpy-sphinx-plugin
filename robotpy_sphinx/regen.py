@@ -47,13 +47,15 @@ def _heading(name, c):
     return "%s\n%s" % (name, c * len(name))
 
 
-def gen_package(root: str, package_name: str, exclude=None):
+def gen_package(root: str, package_name: str, include=None, exclude=None):
     """
         Writes rst files describing a package
     """
 
     if not exclude:
         exclude = []
+    if include is None:
+        include = ["*"]
 
     found = find_mod_objs(package_name)
 
@@ -72,6 +74,15 @@ def gen_package(root: str, package_name: str, exclude=None):
     functions = []
 
     for name, _, obj in zip(*found):
+
+        included = False
+        for pattern in include:
+            if fnmatch.fnmatch(name, pattern):
+                included = True
+                break
+
+        if not included:
+            continue
 
         excluded = False
         for pattern in exclude:
