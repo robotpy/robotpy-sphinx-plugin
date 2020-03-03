@@ -21,7 +21,7 @@ from sphinx_automodapi.utils import find_mod_objs
 mod_doc = """
 %(header)s
 
-%(fnlink)s
+%(include)s%(fnlink)s
 
 .. autosummary::
     %(names)s
@@ -61,7 +61,11 @@ def gen_package(root: str, package_name: str, include=None, exclude=None):
 
     docdir = abspath(join(root, package_name))
     fnrst = abspath(join(root, package_name, "functions.rst"))
-    pkgrst = abspath(join(root, f"{package_name}.rst"))
+
+    pkgbase = f"{package_name}.rst"
+    pkgrst = abspath(join(root, pkgbase))
+    incbase = f"{pkgbase}.inc"
+    incrst = abspath(join(root, incbase))
 
     old_files = {}
     if exists(docdir):
@@ -133,12 +137,17 @@ def gen_package(root: str, package_name: str, include=None, exclude=None):
         write_if_changed(fnrst, "\n".join(functions_doc))
         old_files.pop(fnrst, None)
 
+    include = ""
+    if exists(incrst):
+        include = f".. include:: {incbase}\n\n"
+
     write_if_changed(
         pkgrst,
         mod_doc
         % {
             "header": _heading(package_name + " Package", "="),
             "fnlink": fnlink,
+            "include": include,
             "module": package_name,
             "names": "\n    ".join(names),
             "files": "\n    ".join(files),
