@@ -49,7 +49,7 @@ def _heading(name, c):
 
 def gen_package(root: str, package_name: str, include=None, exclude=None):
     """
-        Writes rst files describing a package
+    Writes rst files describing a package
     """
 
     if not exclude:
@@ -131,7 +131,10 @@ def gen_package(root: str, package_name: str, include=None, exclude=None):
         functions_doc = _heading(f"{package_name} functions", "-").split("\n")
         for fn in functions:
             functions_doc.extend(
-                ["", f".. autofunction:: {package_name}.{fn}" "",]
+                [
+                    "",
+                    f".. autofunction:: {package_name}.{fn}" "",
+                ]
             )
 
         write_if_changed(fnrst, "\n".join(functions_doc))

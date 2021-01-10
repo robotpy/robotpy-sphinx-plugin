@@ -15,13 +15,13 @@ def generate_sidebar(
     conf, this_project, url, out="_sidebar.inc.rst", cfg="_sidebar.toml", lang="en"
 ):
     """
-        Call this from your sphinx project's conf.py::
+    Call this from your sphinx project's conf.py::
 
-            generate_sidebar(globals(), "name", "url")
+        generate_sidebar(globals(), "name", "url")
 
-        Your toplevel index.rst should have something like this:
+    Your toplevel index.rst should have something like this:
 
-            .. include:: _sidebar.rst.inc
+        .. include:: _sidebar.rst.inc
     """
 
     # determine 'latest' or 'stable'
