@@ -13,6 +13,10 @@ def process_signature(
     if what not in ("class", "method") or signature is None:
         return
 
+    if what == "class":
+        # pybind11 sticks ` -> None` here, get rid of it
+        return_annotation = None
+
     if signature.startswith("(self: "):
         comma_idx = signature.find(", ")
         if comma_idx == -1:
