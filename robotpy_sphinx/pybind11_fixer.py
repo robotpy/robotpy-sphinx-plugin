@@ -1,21 +1,30 @@
-import sphinx.addnodes
+from typing import Optional, Tuple
 
 
-def process_child(node):
+def process_signature(
+    app,
+    what: str,
+    name: str,
+    obj,
+    options,
+    signature: Optional[str],
+    return_annotation: Optional[str],
+) -> Optional[Tuple[str, Optional[str]]]:
+    if what not in ("class", "method") or signature is None:
+        return
 
-    if isinstance(node, sphinx.addnodes.desc_parameterlist) and node.children:
-        first_child = node.children[0]
-        if first_child.children and str(first_child.children[0]).startswith("self:"):
-            node.children = node.children[1:]
+    if what == "class":
+        # pybind11 sticks ` -> None` here, get rid of it
+        return_annotation = None
 
-    for child in node.children:
-        process_child(child)
-
-
-def doctree_read(app, doctree):
-    for child in doctree.children:
-        process_child(child)
+    if signature.startswith("(self: "):
+        comma_idx = signature.find(", ")
+        if comma_idx == -1:
+            signature = "()"
+        else:
+            signature = "(" + signature[comma_idx + 2 :]
+        return signature, return_annotation
 
 
 def setup(app):
-    app.connect("doctree-read", doctree_read)
+    app.connect("autodoc-process-signature", process_signature)

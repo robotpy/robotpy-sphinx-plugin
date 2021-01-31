@@ -11,15 +11,16 @@
 import fnmatch
 import inspect
 import os
-import sys
 
-from os.path import abspath, join, dirname, exists
+from os.path import abspath, join, exists
 from .utils import write_if_changed
 
 from sphinx_automodapi.utils import find_mod_objs
 
 mod_doc = """
 %(header)s
+
+.. module:: %(module)s
 
 %(include)s%(fnlink)s
 
@@ -28,7 +29,7 @@ mod_doc = """
 
 .. toctree::
     :hidden:
-    
+
     %(files)s
 
 """
@@ -120,7 +121,6 @@ def gen_package(root: str, package_name: str, include=None, exclude=None):
 
     # Create toctree
 
-    names = ["%s.%s" % (package_name, clsname) for clsname in classes]
     files = ["%s/%s" % (package_name, clsname) for clsname in classes]
     fnlink = ""
 
@@ -129,13 +129,12 @@ def gen_package(root: str, package_name: str, include=None, exclude=None):
         fnlink = f":doc:`{package_name} functions <{package_name}/functions>`"
 
         functions_doc = _heading(f"{package_name} functions", "-").split("\n")
+        functions_doc.append(f".. currentmodule:: {package_name}")
         for fn in functions:
-            functions_doc.extend(
-                [
-                    "",
-                    f".. autofunction:: {package_name}.{fn}" "",
-                ]
-            )
+            functions_doc += [
+                "",
+                f".. autofunction:: {package_name}.{fn}",
+            ]
 
         write_if_changed(fnrst, "\n".join(functions_doc))
         old_files.pop(fnrst, None)
@@ -152,7 +151,7 @@ def gen_package(root: str, package_name: str, include=None, exclude=None):
             "fnlink": fnlink,
             "include": include,
             "module": package_name,
-            "names": "\n    ".join(names),
+            "names": "\n    ".join(classes),
             "files": "\n    ".join(files),
         },
     )
