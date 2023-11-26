@@ -17,6 +17,7 @@ import pathlib
 import subprocess
 import sys
 import tempfile
+import typing
 import zipfile
 
 import packaging.tags
@@ -49,7 +50,7 @@ def download_artifact_wheel(
     run_name: str,
     artifact_name: str,
     whl_path: pathlib.Path,
-) -> pathlib.Path:
+) -> typing.List[pathlib.Path]:
     s = requests.session()
     s.headers.update(
         {
@@ -95,6 +96,7 @@ def download_artifact_wheel(
     artifact_content_fp = io.BytesIO(artifact_content.content)
 
     # extract a wheel matching this python
+    wheels: typing.List[pathlib.Path] = []
     with zipfile.ZipFile(artifact_content_fp) as zfp:
         for zf in zfp.infolist():
             if fnmatch.fnmatch(zf.filename, "*.whl"):
@@ -107,9 +109,11 @@ def download_artifact_wheel(
                     with open(out_fname, "wb") as wfp:
                         with zfp.open(zf) as zwfp:
                             wfp.write(zwfp.read())
-                    return out_fname
-        else:
-            raise DownloadError(f"Could not find compatible wheel")
+                    wheels.append(out_fname)
+    if not wheels:
+        raise DownloadError(f"Could not find compatible wheel")
+
+    return wheels
 
 
 def main():
@@ -139,7 +143,7 @@ def main():
 
     with tempfile.TemporaryDirectory() as tmp:
         try:
-            whl_name = download_artifact_wheel(
+            wheels = download_artifact_wheel(
                 token,
                 args.owner,
                 args.repo,
@@ -150,7 +154,7 @@ def main():
                 pathlib.Path(tmp),
             )
         except DownloadError as e:
-            print("ERROR:", e)
+            print("ERROR:", e, file=sys.stderr)
             exit(1)
 
         proc = subprocess.run(
@@ -160,8 +164,8 @@ def main():
                 "pip",
                 "--disable-pip-version-check",
                 "install",
-                str(whl_name),
             ]
+            + list(map(str, wheels))
         )
         exit(proc.returncode)
 
