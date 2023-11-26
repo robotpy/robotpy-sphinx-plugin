@@ -50,7 +50,6 @@ def download_artifact_wheel(
     artifact_name: str,
     whl_path: pathlib.Path,
 ) -> pathlib.Path:
-
     s = requests.session()
     s.headers.update(
         {
@@ -114,7 +113,6 @@ def download_artifact_wheel(
 
 
 def main():
-
     parser = argparse.ArgumentParser()
     parser.add_argument("owner")
     parser.add_argument("repo")

@@ -79,7 +79,6 @@ def gen_package(root: str, package_name: str, include=None, exclude=None):
     functions = []
 
     for name, _, obj in zip(*found):
-
         included = False
         for pattern in include:
             if fnmatch.fnmatch(name, pattern):

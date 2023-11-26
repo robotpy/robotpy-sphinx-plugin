@@ -1,5 +1,4 @@
 def write_if_changed(fname, contents):
-
     try:
         with open(fname, "r") as fp:
             old_contents = fp.read()
