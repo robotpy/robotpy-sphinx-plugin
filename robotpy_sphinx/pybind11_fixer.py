@@ -22,7 +22,7 @@ def process_signature(
             if fdoc and fdoc.startswith("(self:"):
                 s = fdoc.split("->")
                 if len(s) == 2:
-                    return "(self)", s[1]
+                    return "()", s[1]
 
         return
 
