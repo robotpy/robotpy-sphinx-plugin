@@ -20,7 +20,7 @@ from sphinx_automodapi.utils import find_mod_objs
 mod_doc = """
 %(header)s
 
-.. module:: %(module)s
+.. automodule:: %(module)s
 
 %(include)s%(fnlink)s
 
