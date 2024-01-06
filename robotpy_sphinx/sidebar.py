@@ -40,6 +40,8 @@ def generate_sidebar(
     def write(project, desc, link):
         if project == this_project:
             args = desc, link
+            if link == "index":
+                return
         elif not do_gen:
             return
         else:
