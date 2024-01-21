@@ -8,3 +8,4 @@ def setup(app):
 
     app.setup_extension(pybind11_fixer.__name__)
     app.setup_extension("sphinx_automodapi.smart_resolver")
+    app.setup_extension(rtd_patch.__name__)
