@@ -37,7 +37,7 @@ def generate_sidebar(
     def endl():
         lines.append("")
 
-    def write(project, desc, link):
+    def write(project, desc, link, actual):
         if project == this_project:
             args = desc, link
             if link == "index":
@@ -45,11 +45,14 @@ def generate_sidebar(
         elif not do_gen:
             return
         else:
-            project_url = data["projects"][project]
-            args = (
-                desc,
-                f"{project_url}/{lang}/{version}/{link}.html",
-            )
+            project_url = data["projects"][project].rstrip("/")
+            if actual:
+                args = (desc, f"{project_url}/{link}.html")
+            else:
+                args = (
+                    desc,
+                    f"{project_url}/{lang}/{version}/{link}.html",
+                )
 
         lines.append("    %s <%s>" % args)
 
@@ -63,7 +66,7 @@ def generate_sidebar(
         toctree(tt["name"])
 
         for item in tt["items"]:
-            write(item["p"], item["k"], item["v"])
+            write(item["p"], item["k"], item["v"], item.get("actual_url", False))
 
         endl()
 
