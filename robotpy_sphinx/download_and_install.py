@@ -32,6 +32,17 @@ class DownloadError(Exception):
 sys_tags = list(packaging.tags.sys_tags())
 
 
+def _iter_paginated_items(
+    session: requests.Session, url: str, key: str
+) -> typing.Iterator[typing.Dict[str, typing.Any]]:
+    while url:
+        response = session.get(url)
+        payload = response.json()
+        for item in payload.get(key, []):
+            yield item
+        url = response.links.get("next", {}).get("url")
+
+
 def is_wheel_compatible(whl_fname: str) -> bool:
     _, _, _, whl_tags = packaging.utils.parse_wheel_filename(whl_fname)
     for sys_tag in sys_tags:
@@ -85,7 +96,7 @@ def download_artifact_wheel(
 
     # Find the artifacts for this run
     print("Getting artifacts list from", run["artifacts_url"])
-    for artifact in s.get(run["artifacts_url"]).json()["artifacts"]:
+    for artifact in _iter_paginated_items(s, run["artifacts_url"], "artifacts"):
         if artifact["name"] == artifact_name:
             break
     else:
