@@ -1,5 +1,5 @@
 """
-    Includes sphinx extensions useful for all robotpy projects
+Includes sphinx extensions useful for all robotpy projects
 """
 
 

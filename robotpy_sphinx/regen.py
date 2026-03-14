@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-    A custom documentation generator because sphinx-apidoc doesn't quite do
-    what I want it to. The autosummary thing is really close to what I want.
-    However, the documentation for how to use it is lacking.
-    
-    This is designed to generate docs for our flat import structure in a
-    manner that is friendly to the readthedocs theme.
+A custom documentation generator because sphinx-apidoc doesn't quite do
+what I want it to. The autosummary thing is really close to what I want.
+However, the documentation for how to use it is lacking.
+
+This is designed to generate docs for our flat import structure in a
+manner that is friendly to the readthedocs theme.
 """
 
 import fnmatch
